@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const registrationForm = document.getElementById('registrationForm');
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwMnZ1kGRtDEGaIessHeLqnMxWLsAy4qJwxqGHEQRK-HQp_oFUs6SWmXeZ6URsTrnNKRw/exec'; // <--- Paste your App Script URL here
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxf1KpAFO7f_e7svdAaGwdM-lG-_gVHC_r5GjiyTPIEf-FeJe8jp5-kYdZDJhrXXk3JGQ/exec'; // <--- Paste your App Script URL here
 
     registrationForm.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.disabled = true;
 
         const formData = new FormData(registrationForm);
+        formData.append('location', 'Riyadh');
 
         fetch(scriptURL, { 
             method: 'POST', 
