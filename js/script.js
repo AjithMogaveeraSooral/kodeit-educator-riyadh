@@ -1,0 +1,107 @@
+document.addEventListener('DOMContentLoaded', function() {
+    const registrationForm = document.getElementById('registrationForm');
+    const scriptURL = 'https://script.google.com/macros/s/AKfycby_RGbBgmtXMsWl9GtHXj8Fn0kbnxQBHrE5J6C9AVV_a97pb8UajjaKmkERIKzY9pFI/exec'; // <--- Paste your App Script URL here
+
+    registrationForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const checkedGrades = document.querySelectorAll('input[name="grade_levels[]"]:checked');
+        if (checkedGrades.length === 0) {
+            alert('Please select at least one Grade Level.');
+            return;
+        }
+
+        const submitBtn = document.querySelector('.btn-submit-modern');
+        const originalText = submitBtn.innerText;
+        submitBtn.innerText = "Processing...";
+        submitBtn.disabled = true;
+
+        const formData = new FormData(registrationForm);
+
+        // Handle "Other" subject: if Other is selected, use the text input value
+        const subjectOtherRadio = document.getElementById('subjectOther');
+        const subjectOtherInput = document.getElementById('subjectOtherInput');
+        if (subjectOtherRadio && subjectOtherRadio.checked && subjectOtherInput.value.trim()) {
+            formData.set('subject', subjectOtherInput.value.trim());
+        }
+
+        fetch(scriptURL, { 
+            method: 'POST', 
+            body: formData 
+        })
+        .then(response => {
+            alert('Registration Successful! Check your email for confirmation.');
+            registrationForm.reset();
+            updateLabel();
+        })
+        .catch(error => {
+            console.error('Error!', error.message);
+            alert('Submission failed. Please try again.');
+        })
+        .finally(() => {
+            submitBtn.innerText = originalText;
+            submitBtn.disabled = false;
+        });
+    });
+});
+
+function toggleDropdown() {
+  const checkboxes = document.getElementById("checkboxes");
+  checkboxes.style.display = checkboxes.style.display === "block" ? "none" : "block";
+}
+
+function toggleSelectAll(source) {
+  const checkboxes = document.querySelectorAll('.grade-chk');
+  checkboxes.forEach(chk => chk.checked = source.checked);
+  updateLabel();
+}
+
+function updateLabel() {
+  const checkboxes = document.querySelectorAll('.grade-chk');
+  const checked = Array.from(checkboxes).filter(chk => chk.checked);
+  const label = document.getElementById("select-label");
+  const selectAll = document.getElementById("selectAll");
+
+  if (checked.length === 0) {
+    label.innerText = "Select Grade Levels";
+    selectAll.checked = false;
+  } else if (checked.length === checkboxes.length) {
+    label.innerText = "All Selected";
+    selectAll.checked = true;
+  } else {
+    label.innerText = checked.length + " Levels Selected";
+    selectAll.checked = false;
+  }
+
+  document.getElementById("checkboxes").style.display = "none";
+}
+
+window.onclick = function(event) {
+  if (!event.target.closest('.custom-multiselect')) {
+    document.getElementById("checkboxes").style.display = "none";
+  }
+}
+
+// Toggle subject "Other" input visibility
+function toggleSubjectOther() {
+  const otherRadio = document.getElementById('subjectOther');
+  const otherContainer = document.getElementById('subjectOtherContainer');
+  const otherInput = document.getElementById('subjectOtherInput');
+  
+  if (otherRadio && otherRadio.checked) {
+    otherContainer.style.display = 'block';
+    otherInput.required = true;
+  } else {
+    otherContainer.style.display = 'none';
+    otherInput.required = false;
+    otherInput.value = '';
+  }
+}
+
+// Add event listeners to all subject radio buttons to handle toggling
+document.addEventListener('DOMContentLoaded', function() {
+  const subjectRadios = document.querySelectorAll('input[name="subject"]');
+  subjectRadios.forEach(function(radio) {
+    radio.addEventListener('change', toggleSubjectOther);
+  });
+});
