@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
             body: formData 
         })
         .then(response => {
-            alert('Registration Successful! Check your email for confirmation.');
+            alert('Registration Successful!');
             registrationForm.reset();
         })
         .catch(error => {
